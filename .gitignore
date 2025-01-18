@@ -1,0 +1,9 @@
+*.py[oc]
+*.egg-info
+
+build/
+dist/
+wheels/
+__pycache__/
+.venv/
+node_modules/
