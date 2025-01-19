@@ -28,7 +28,6 @@ export interface UIConfig {
 	_id?: string;
 	tenant_id: string;
 	type: ConfigType;
-	name: string;
 	description?: string;
 	fields: FormField[];
 }

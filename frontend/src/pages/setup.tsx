@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils"; // utility for merging classnames, if desired
 import {
   ConfigType,
   type FormField,
@@ -23,15 +21,16 @@ import {
   type UIConfig,
 } from "@/services/types";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { listConfigs } from "@/services/configService";
+import { Eye } from "lucide-react";
 
 // Optionally, adjust to your actual backend base URL
 const API_BASE_URL =
@@ -42,46 +41,35 @@ function ConfigFormDialog({
   open,
   onOpenChange,
   onSuccess,
+  configToEdit,
 }: {
   tenantId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: (config: UIConfig) => void;
+  // Pass in an existing config (if editing) or undefined (if creating)
+  configToEdit?: UIConfig;
 }) {
   const [configType, setConfigType] = useState<ConfigType | "">("");
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState<FormField[]>([]);
+  const [existingId, setExistingId] = useState<string | undefined>(undefined);
 
-  // --------------
-  // Helper methods
-  // --------------
-
-  // Fetch config (GET) if you want to load existing data
-  async function handleLoadConfig() {
-    if (!tenantId || !configType) {
-      toast.error("Please enter both tenantId and configType before loading.");
-      return;
-    }
-
-    try {
-      const res = await axios.get<UIConfig>(
-        `${API_BASE_URL}/config/${tenantId}/${configType}`,
-      );
-      const data = res.data;
-      setDescription(data.description ?? "");
-      setFields(data.fields);
-      toast.success("Existing config loaded.");
-    } catch (error: unknown) {
-      console.error(error);
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.detail ?? "Config not found.");
-      } else {
-        toast.error("Config not found.");
-      }
-      setFields([]);
+  // When configToEdit changes, update local state for editing
+  useEffect(() => {
+    if (configToEdit) {
+      setConfigType(configToEdit.type);
+      setDescription(configToEdit.description ?? "");
+      setFields(configToEdit.fields);
+      setExistingId(configToEdit._id);
+    } else {
+      // Reset for creating
+      setConfigType("");
       setDescription("");
+      setFields([]);
+      setExistingId(undefined);
     }
-  }
+  }, [configToEdit]);
 
   // Create or Update config
   async function handleSaveConfig() {
@@ -100,11 +88,24 @@ function ConfigFormDialog({
 
     try {
       let res: { data: UIConfig } | undefined;
-      res = await axios.post<UIConfig>(`${API_BASE_URL}/config/`, payload);
-      toast.success("Config created successfully");
 
-      // After save, update local state
-      onSuccess(res.data);
+      // If we have an _id, assume we are updating, else create
+      if (existingId) {
+        // PUT to /config/{tenantId}/{configType}
+        res = await axios.put<UIConfig>(
+          `${API_BASE_URL}/config/${tenantId}/${configType}`,
+          payload,
+        );
+        toast.success("Config updated successfully");
+      } else {
+        // POST to /config/
+        res = await axios.post<UIConfig>(`${API_BASE_URL}/config/`, payload);
+        toast.success("Config created successfully");
+      }
+
+      if (res?.data) {
+        onSuccess(res.data);
+      }
     } catch (error: unknown) {
       console.error(error);
       if (axios.isAxiosError(error)) {
@@ -116,33 +117,6 @@ function ConfigFormDialog({
       }
     }
   }
-
-  // Delete entire config
-  async function handleDeleteConfig() {
-    if (!tenantId || !configType) {
-      toast.error("Tenant ID and Config Type are required to delete.");
-      return;
-    }
-
-    try {
-      await axios.delete(`${API_BASE_URL}/config/${tenantId}/${configType}`);
-      toast.success("Config deleted successfully");
-      // Clear local states
-      setFields([]);
-      setDescription("");
-    } catch (error: unknown) {
-      console.error(error);
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.detail ?? "Error deleting config.");
-      } else {
-        toast.error("Error deleting config.");
-      }
-    }
-  }
-
-  // --------------
-  // Field methods
-  // --------------
 
   // Add a new form field card
   function handleAddField() {
@@ -303,15 +277,13 @@ function ConfigFormDialog({
     }
   }
 
-  // --------------
-  // Render
-  // --------------
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Configuration</DialogTitle>
+          <DialogTitle>
+            {existingId ? "Edit Configuration" : "Create New Configuration"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -392,7 +364,9 @@ function ConfigFormDialog({
           </div>
 
           <div className="flex justify-end">
-            <Button onClick={handleSaveConfig}>Create Config</Button>
+            <Button onClick={handleSaveConfig}>
+              {existingId ? "Save Changes" : "Create Config"}
+            </Button>
           </div>
         </div>
       </DialogContent>
@@ -403,10 +377,53 @@ function ConfigFormDialog({
 export default function SetupPage() {
   const [tenantId, setTenantId] = useState("tenant123");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [configs, setConfigs] = useState<UIConfig[]>([]);
+  const [selectedConfig, setSelectedConfig] = useState<UIConfig | undefined>(
+    undefined,
+  );
+
+  // Load configs on mount
+  useEffect(() => {
+    async function fetchConfigs() {
+      try {
+        const data = await listConfigs(tenantId);
+        setConfigs(data);
+      } catch (error) {
+        console.error(error);
+        toast.error("Error loading configs");
+      }
+    }
+    fetchConfigs();
+  }, [tenantId]);
+
+  // Open dialog for creating a brand new config
+  function handleNewConfig() {
+    setSelectedConfig(undefined);
+    setIsDialogOpen(true);
+  }
+
+  // Open dialog for editing an existing config
+  function handleEditConfig(config: UIConfig) {
+    setSelectedConfig(config);
+    setIsDialogOpen(true);
+  }
+
+  // When a config is successfully created/updated, close dialog and refresh
+  async function handleSuccess(updatedConfig: UIConfig) {
+    setIsDialogOpen(false);
+    // Refresh the list (naive approach: fetch again)
+    try {
+      const data = await listConfigs(tenantId);
+      setConfigs(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error reloading configs");
+    }
+  }
 
   return (
     <div className="container mx-auto p-4 flex justify-center">
-      <div className="max-w-2xl w-full space-y-6">
+      <div className="max-w-3xl w-full space-y-6">
         <h1 className="text-2xl font-bold mb-4">Configuration Management</h1>
 
         <div className="space-y-4">
@@ -416,24 +433,57 @@ export default function SetupPage() {
               value={tenantId}
               onChange={(e) => setTenantId(e.target.value)}
               placeholder="tenant123"
+              disabled
             />
           </div>
 
-          <ConfigFormDialog
-            tenantId={tenantId}
-            open={isDialogOpen}
-            onOpenChange={setIsDialogOpen}
-            onSuccess={(config) => {
-              setIsDialogOpen(false);
-              // Handle success if needed
-            }}
-          />
+          {/* List existing configs */}
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold">Existing Configs</h2>
+            {configs.length === 0 && <p>No configs found</p>}
+            {configs.length > 0 && (
+              <table className="min-w-full border">
+                <thead>
+                  <tr className="border-b">
+                    <th className="p-2 text-left">Type</th>
+                    <th className="p-2 text-left">Name</th>
+                    <th className="p-2 text-left">Description</th>
+                    <th className="p-2 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {configs.map((cfg) => (
+                    <tr key={cfg._id ?? `${cfg.tenant_id}-${cfg.type}`} className="border-b">
+                      <td className="p-2">{cfg.type}</td>
+                      <td className="p-2">{cfg.description}</td>
+                      <td className="p-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditConfig(cfg)}
+                        >
+                          <Eye className="mr-1 h-4 w-4" />
+                          View/Edit
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
 
-          <Button onClick={() => setIsDialogOpen(true)}>
-            Create New Config
-          </Button>
+          <Button onClick={handleNewConfig}>Create New Config</Button>
         </div>
       </div>
+
+      <ConfigFormDialog
+        tenantId={tenantId}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSuccess={handleSuccess}
+        configToEdit={selectedConfig}
+      />
     </div>
   );
 }
