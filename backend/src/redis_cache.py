@@ -33,6 +33,14 @@ def set_config_in_cache(tenant_id: str, config_name: str, config_dict: dict):
     redis_client.set(key, json.dumps(config_dict), ex=CACHE_EXPIRE_S)
 
 
+def delete_config_from_cache(tenant_id: str, config_name: str):
+    """
+    Deletes a specific config entry from the Redis cache
+    """
+    key = f"ui_config:{tenant_id}:{config_name}"
+    redis_client.delete(key)
+
+
 def flush_cache():
     """
     Flushes the entire Redis database.

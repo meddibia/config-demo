@@ -4,7 +4,6 @@ fastapi router for crud ops on UIConfig
 implements redis caching to reduce mongodb lookups
 """
 
-# TODO: add logfire, run experiments to compare with/without redis
 # TODO: figure out what, if any, authentication is required for cache hits/writes
 #       it may just be as simple as applying our regullar RBAC and letting that control
 #       cache access
@@ -13,7 +12,12 @@ from fastapi import APIRouter, HTTPException, status
 import logfire  # ← add import to enable manual spans
 
 from config_model import UIConfig, UpdateUIConfig, ConfigType
-from redis_cache import get_config_from_cache, set_config_in_cache, flush_cache
+from redis_cache import (
+    get_config_from_cache,
+    set_config_in_cache,
+    flush_cache,
+    delete_config_from_cache,
+)
 
 router = APIRouter()
 
@@ -103,8 +107,7 @@ async def delete_ui_config(tenant_id: str, config_type: ConfigType):
         )
 
     await doc.delete()
-    # TODO: implement cache deletion in redis_cache module
-    # delete_config_from_cache(tenant_id, config_type)
+    delete_config_from_cache(tenant_id, config_type)
     return {"status": "success", "message": "Config deleted"}
 
 
