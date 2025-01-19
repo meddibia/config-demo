@@ -14,6 +14,13 @@ export enum ConfigType {
 	PATIENT_BILLING = "patient-billing",
 }
 
+export interface FieldValidation {
+	required?: boolean;
+	min_length?: number;
+	max_length?: number;
+	pattern?: string;
+}
+
 export interface FormField {
 	id: string;
 	type: FormFieldType;
@@ -22,6 +29,7 @@ export interface FormField {
 	options?: string[];
 	content?: string;
 	default?: string | boolean;
+	validation?: FieldValidation;
 }
 
 export interface UIConfig {

@@ -37,6 +37,7 @@ class FieldValidation(BaseModel):
     # implement as many as needed: ge, le, gt, lt, etc
 
 
+# TODO: expand this to support numeric/date fields
 class FormField(BaseModel):
     """
     represents a single form field or a static item in the ui

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import {
   ConfigType,
+  FieldValidation,
   type FormField,
   FormFieldType,
   type UIConfig,
@@ -29,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { listConfigs } from "@/services/configService";
+import { listConfigs, deleteUIConfig } from "@/services/configService";
 import { Eye } from "lucide-react";
 
 // Optionally, adjust to your actual backend base URL
@@ -71,6 +72,45 @@ function ConfigFormDialog({
     }
   }, [configToEdit]);
 
+  // Helper to update the top-level field properties
+  function handleFieldChange(
+    id: string,
+    prop: keyof FormField,
+    value: unknown,
+  ) {
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id === id) {
+          return { ...field, [prop]: value };
+        }
+        return field;
+      }),
+    );
+  }
+
+  // Helper to update only the nested validation object
+  function handleFieldValidationChange(
+    id: string,
+    key: keyof FieldValidation,
+    value: unknown,
+  ) {
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id === id) {
+          return {
+            ...field,
+            validation: {
+              required: field.validation?.required ?? true,
+              ...field.validation,
+              [key]: value,
+            },
+          };
+        }
+        return field;
+      }),
+    );
+  }
+
   // Create or Update config
   async function handleSaveConfig() {
     if (!tenantId || !configType) {
@@ -91,14 +131,12 @@ function ConfigFormDialog({
 
       // If we have an _id, assume we are updating, else create
       if (existingId) {
-        // PUT to /config/{tenantId}/{configType}
         res = await axios.put<UIConfig>(
           `${API_BASE_URL}/config/${tenantId}/${configType}`,
           payload,
         );
         toast.success("Config updated successfully");
       } else {
-        // POST to /config/
         res = await axios.post<UIConfig>(`${API_BASE_URL}/config/`, payload);
         toast.success("Config created successfully");
       }
@@ -128,6 +166,12 @@ function ConfigFormDialog({
       options: [],
       content: "",
       default: "",
+      validation: {
+        required: true,
+        min_length: undefined,
+        max_length: undefined,
+        pattern: undefined,
+      },
     };
     setFields((prev) => [...prev, newField]);
   }
@@ -135,22 +179,6 @@ function ConfigFormDialog({
   // Remove a field card by ID
   function handleRemoveField(id: string) {
     setFields((prev) => prev.filter((field) => field.id !== id));
-  }
-
-  // Update a field's property
-  function handleFieldChange(
-    id: string,
-    prop: keyof FormField,
-    value: unknown,
-  ) {
-    setFields((prev) =>
-      prev.map((field) => {
-        if (field.id === id) {
-          return { ...field, [prop]: value };
-        }
-        return field;
-      }),
-    );
   }
 
   // Render the dynamic form controls for each field type
@@ -277,6 +305,72 @@ function ConfigFormDialog({
     }
   }
 
+  // Show validation controls if the field is not HEADER/STATIC
+  function renderValidationControls(field: FormField) {
+    if (
+      field.type === FormFieldType.HEADER ||
+      field.type === FormFieldType.STATIC
+    ) {
+      return null;
+    }
+
+    return (
+      <div className="mt-4 border-t pt-4">
+        <h3 className="text-md font-medium mb-2">Validation</h3>
+
+        <div className="flex items-center mb-2">
+          <Label className="mr-2">Required:</Label>
+          <input
+            type="checkbox"
+            checked={field.validation?.required !== false}
+            onChange={(e) =>
+              handleFieldValidationChange(
+                field.id,
+                "required",
+                e.target.checked,
+              )
+            }
+          />
+        </div>
+
+        <Label className="mt-2">Min Length:</Label>
+        <Input
+          type="number"
+          value={field.validation?.min_length ?? ""}
+          onChange={(e) =>
+            handleFieldValidationChange(
+              field.id,
+              "min_length",
+              e.target.value ? parseInt(e.target.value, 10) : undefined,
+            )
+          }
+        />
+
+        <Label className="mt-2">Max Length:</Label>
+        <Input
+          type="number"
+          value={field.validation?.max_length ?? ""}
+          onChange={(e) =>
+            handleFieldValidationChange(
+              field.id,
+              "max_length",
+              e.target.value ? parseInt(e.target.value, 10) : undefined,
+            )
+          }
+        />
+
+        <Label className="mt-2">Regex Pattern:</Label>
+        <Input
+          value={field.validation?.pattern ?? ""}
+          onChange={(e) =>
+            handleFieldValidationChange(field.id, "pattern", e.target.value)
+          }
+          placeholder="e.g. ^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+        />
+      </div>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -324,11 +418,9 @@ function ConfigFormDialog({
             {fields.map((field) => (
               <Card key={field.id}>
                 <CardHeader className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      Field: {field.id.slice(0, 8)}...
-                    </CardTitle>
-                  </div>
+                  <CardTitle className="flex items-center gap-2">
+                    Field: {field.id.slice(0, 8)}...
+                  </CardTitle>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -357,7 +449,11 @@ function ConfigFormDialog({
                     </SelectContent>
                   </Select>
 
+                  {/* Main field controls */}
                   {renderFieldControls(field)}
+
+                  {/* Validation controls */}
+                  {renderValidationControls(field)}
                 </CardContent>
               </Card>
             ))}
@@ -396,7 +492,7 @@ export default function SetupPage() {
     fetchConfigs();
   }, [tenantId]);
 
-  // Open dialog for creating a brand new config
+  // Open dialog for creating a new config
   function handleNewConfig() {
     setSelectedConfig(undefined);
     setIsDialogOpen(true);
@@ -408,10 +504,31 @@ export default function SetupPage() {
     setIsDialogOpen(true);
   }
 
-  // When a config is successfully created/updated, close dialog and refresh
+  // Delete a config
+  async function handleDeleteConfig(config: UIConfig) {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the config of type "${config.type}"?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteUIConfig(tenantId, config.type);
+      toast.success("Config deleted successfully");
+      const data = await listConfigs(tenantId);
+      setConfigs(data);
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Error deleting config.");
+      } else {
+        toast.error("Error deleting config.");
+      }
+    }
+  }
+
+  // When a config is successfully created/updated
   async function handleSuccess(updatedConfig: UIConfig) {
     setIsDialogOpen(false);
-    // Refresh the list (naive approach: fetch again)
     try {
       const data = await listConfigs(tenantId);
       setConfigs(data);
@@ -437,7 +554,7 @@ export default function SetupPage() {
             />
           </div>
 
-          {/* List existing configs */}
+          {/* Existing configs */}
           <div className="space-y-2">
             <h2 className="text-lg font-semibold">Existing Configs</h2>
             {configs.length === 0 && <p>No configs found</p>}
@@ -446,17 +563,19 @@ export default function SetupPage() {
                 <thead>
                   <tr className="border-b">
                     <th className="p-2 text-left">Type</th>
-                    <th className="p-2 text-left">Name</th>
                     <th className="p-2 text-left">Description</th>
                     <th className="p-2 text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {configs.map((cfg) => (
-                    <tr key={cfg._id ?? `${cfg.tenant_id}-${cfg.type}`} className="border-b">
+                    <tr
+                      key={cfg._id ?? `${cfg.tenant_id}-${cfg.type}`}
+                      className="border-b"
+                    >
                       <td className="p-2">{cfg.type}</td>
                       <td className="p-2">{cfg.description}</td>
-                      <td className="p-2">
+                      <td className="p-2 flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -464,6 +583,14 @@ export default function SetupPage() {
                         >
                           <Eye className="mr-1 h-4 w-4" />
                           View/Edit
+                        </Button>
+                        {/* Delete button */}
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteConfig(cfg)}
+                        >
+                          Delete
                         </Button>
                       </td>
                     </tr>
