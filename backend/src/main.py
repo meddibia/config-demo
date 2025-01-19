@@ -3,14 +3,13 @@ main.py
 entrypoint for backend
 """
 
+import config_router
+import logfire
 from beanie import init_beanie
+from config_model import UIConfig
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-
-import config_router
-from config_model import UIConfig
-import logfire
 
 # load these from config.Settings
 MONGO_URI = "mongodb://mongo:27017"

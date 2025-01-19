@@ -8,15 +8,14 @@ implements redis caching to reduce mongodb lookups
 #       it may just be as simple as applying our regullar RBAC and letting that control
 #       cache access
 
-from fastapi import APIRouter, HTTPException, status
 import logfire  # ← add import to enable manual spans
-
-from config_model import UIConfig, UpdateUIConfig, ConfigType
+from config_model import ConfigType, UIConfig, UpdateUIConfig
+from fastapi import APIRouter, HTTPException, status
 from redis_cache import (
+    delete_config_from_cache,
+    flush_cache,
     get_config_from_cache,
     set_config_in_cache,
-    flush_cache,
-    delete_config_from_cache,
 )
 
 router = APIRouter()

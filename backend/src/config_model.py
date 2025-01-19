@@ -3,10 +3,10 @@ config_model.py
 defines the mongodb model for storing form/config data using beanie
 """
 
+from enum import Enum
+
 from beanie import Document
 from pydantic import BaseModel, Field, field_serializer
-
-from enum import Enum
 
 
 class FormFieldType(str, Enum):
