@@ -73,7 +73,7 @@ async def create_ui_config(config: UIConfig):
     return config
 
 
-@router.put("/{tenant_id}/{config_name}", response_model=UIConfig)
+@router.put("/{tenant_id}/{config_type}", response_model=UIConfig)
 async def update_ui_config(
     tenant_id: str, config_type: ConfigType, updated_data: UpdateUIConfig
 ):
