@@ -1,0 +1,837 @@
+the code provided in the <file> tags below are from a small web app i'm building to test dynamic UI configuration. currently, the app does not renderr the html correctly, and i'm unsure why. 
+
+the attached immage shows what the site looks like, and here is the html that is produced:
+
+```
+<html lang="en"><head>
+  <script type="module">
+import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true
+</script>
+
+  <script type="module" src="/@vite/client"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Vite React App</title>
+<style type="text/css" data-vite-dev-id="/mnt/arrakis/work/meddibia/config-demo/frontend/src/index.css">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+</style></head>
+<body>
+<div id="root"><div class="container mx-auto p-4"><h1 class="text-3xl font-bold mb-4">Dynamic Form Demo</h1><form class="space-y-6"><h2 class="text-2xl font-semibold mb-4">Patient registration form with sample fields</h2><h3 class="text-xl font-semibold mb-2">Patient Registration Form</h3><div class="text-gray-600 mb-2">Please fill out all required information below.</div><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="full-name">Full Name</label><input type="text" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="full-name" name="fullName" value=""></div><div class="space-y-2"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="gender">Gender</label><button type="button" role="combobox" aria-controls="radix-:r1:" aria-expanded="false" aria-autocomplete="none" dir="ltr" data-state="closed" data-placeholder="" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="gender"><span style="pointer-events: none;">Select an option</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><select aria-hidden="true" tabindex="-1" style="position: absolute; border: 0px; width: 1px; height: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; overflow-wrap: normal;"><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div><div class="flex items-center space-x-2"><button type="button" role="checkbox" aria-checked="false" data-state="unchecked" value="on" class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" id="consent"></button><input type="checkbox" aria-hidden="true" tabindex="-1" value="on" style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 14.4844px; height: 4.48438px;"><label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="consent">I agree to the terms and conditions</label></div><button class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2" type="submit">Submit</button></form></div></div>
+<script type="module" src="/src/main.tsx"></script>
+
+
+<iframe id="6Hc74BMg" frameborder="0" src="chrome-extension://ekhagklcjbdpajgpjgmbionohlpdbjgc/translateSandbox/translateSandbox.html" style="width: 0px; height: 0px; display: none;"></iframe></body></html>
+
+```
+
+
+review the code and the rendered html, identify the cause of this issue, then implement all the code changes necessary to fix it.
+
+
+<file path="Dockerfile">
+FROM oven/bun:1.1.27-slim AS builder
+
+WORKDIR /app
+
+COPY package.json bun.lockb* ./
+RUN bun install
+
+COPY . .
+ENV VITE_API_URL="http://backend:8000"
+RUN bun run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+# COPY default.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Vite React App</title>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
+</file>
+
+<file path="package.json">
+{
+  "name": "ui-config-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "axios": "^1.3.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^4.9.5",
+    "vite": "^4.2.0"
+  }
+}
+</file>
+
+<file path="src/App.tsx">
+import React, { useEffect, useState } from "react";
+import { getUIConfig } from "./services/configService";
+import GenericForm from "./components/GenericForm";
+import type { UIConfig } from "./services/types";
+import "./index.css";
+
+function App() {
+	const [config, setConfig] = useState<UIConfig | null>(null);
+	const [loading, setLoading] = useState(true);
+
+	// Hard-coding tenant/config name for demo
+	useEffect(() => {
+		getUIConfig("tenant123", "patient-registration")
+			.then((response) => {
+				setConfig(response);
+			})
+			.catch((err) => console.error(err))
+			.finally(() => setLoading(false));
+	}, []);
+
+	if (loading) return <div className="p-4">Loading config...</div>;
+	if (!config)
+		return <div className="p-4">Config not found or error occurred.</div>;
+
+	return (
+		<div className="container mx-auto p-4">
+			<h1 className="text-3xl font-bold mb-4">Dynamic Form Demo</h1>
+			<GenericForm config={config} />
+		</div>
+	);
+}
+
+export default App;
+</file>
+
+<file path="src/components/FormField.tsx">
+import { useState } from "react";
+import type { FormField } from "../services/types";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../components/ui/select";
+
+interface FieldProps {
+	field: FormField;
+}
+
+function FormFieldComponent({ field }: FieldProps) {
+	const [value, setValue] = useState<string | boolean>(field.default ?? "");
+
+	switch (field.type) {
+		case "header":
+			return <h3 className="text-xl font-semibold mb-2">{field.content}</h3>;
+
+		case "static":
+			return <div className="text-gray-600 mb-2">{field.content}</div>;
+
+		case "text":
+			return (
+				<div className="space-y-2">
+					<Label htmlFor={field.id}>{field.label}</Label>
+					<Input
+						type="text"
+						id={field.id}
+						name={field.name}
+						value={String(value)}
+						onChange={(e) => setValue(e.target.value)}
+					/>
+				</div>
+			);
+
+		case "select":
+			return (
+				<div className="space-y-2">
+					<Label htmlFor={field.id}>{field.label}</Label>
+					<Select value={String(value)} onValueChange={(val) => setValue(val)}>
+						<SelectTrigger id={field.id}>
+							<SelectValue placeholder="Select an option" />
+						</SelectTrigger>
+						<SelectContent>
+							{field.options?.map((opt) => (
+								<SelectItem key={opt} value={opt}>
+									{opt}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+			);
+
+		case "checkbox":
+			return (
+				<div className="flex items-center space-x-2">
+					<Checkbox
+						id={field.id}
+						checked={Boolean(value)}
+						onCheckedChange={(checked) => setValue(checked)}
+					/>
+					<Label htmlFor={field.id}>{field.label}</Label>
+				</div>
+			);
+
+		default:
+			return <div>Unsupported field type: {field.type}</div>;
+	}
+}
+
+export default FormFieldComponent;
+</file>
+
+<file path="src/components/GenericForm.tsx">
+import type React from "react";
+import type { UIConfig, FormField } from "../services/types";
+import FormFieldComponent from "./FormField";
+import { Button } from "../components/ui/button";
+
+interface GenericFormProps {
+	config: UIConfig;
+}
+
+function GenericForm({ config }: GenericFormProps) {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		// Do something with form data
+		alert("Form submitted! (Check console for captured data.)");
+	};
+
+	return (
+		<form onSubmit={handleSubmit} className="space-y-6">
+			<h2 className="text-2xl font-semibold mb-4">{config.description}</h2>
+			{config.fields.map((field: FormField) => (
+				<FormFieldComponent key={field.id} field={field} />
+			))}
+			<Button type="submit">Submit</Button>
+		</form>
+	);
+}
+
+export default GenericForm;
+</file>
+
+<file path="src/components/ui/button.tsx">
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "../../lib/utils";
+
+const buttonVariants = cva(
+	"inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+	{
+		variants: {
+			variant: {
+				default: "bg-primary text-primary-foreground hover:bg-primary/90",
+				destructive:
+					"bg-destructive text-destructive-foreground hover:bg-destructive/90",
+				outline:
+					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+				secondary:
+					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
+				ghost: "hover:bg-accent hover:text-accent-foreground",
+				link: "text-primary underline-offset-4 hover:underline",
+			},
+			size: {
+				default: "h-10 px-4 py-2",
+				sm: "h-9 rounded-md px-3",
+				lg: "h-11 rounded-md px-8",
+				icon: "h-10 w-10",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+			size: "default",
+		},
+	},
+);
+
+export interface ButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+		VariantProps<typeof buttonVariants> {
+	asChild?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+	({ className, variant, size, asChild = false, ...props }, ref) => {
+		const Comp = asChild ? Slot : "button";
+		return (
+			<Comp
+				className={cn(buttonVariants({ variant, size, className }))}
+				ref={ref}
+				{...props}
+			/>
+		);
+	},
+);
+Button.displayName = "Button";
+
+export { Button, buttonVariants };
+</file>
+
+<file path="src/components/ui/checkbox.tsx">
+import * as React from "react";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Check } from "lucide-react";
+
+import { cn } from "../../lib/utils";
+
+const Checkbox = React.forwardRef<
+	React.ElementRef<typeof CheckboxPrimitive.Root>,
+	React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
+>(({ className, ...props }, ref) => (
+	<CheckboxPrimitive.Root
+		ref={ref}
+		className={cn(
+			"peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+			className,
+		)}
+		{...props}
+	>
+		<CheckboxPrimitive.Indicator
+			className={cn("flex items-center justify-center text-current")}
+		>
+			<Check className="h-4 w-4" />
+		</CheckboxPrimitive.Indicator>
+	</CheckboxPrimitive.Root>
+));
+Checkbox.displayName = CheckboxPrimitive.Root.displayName;
+
+export { Checkbox };
+</file>
+
+<file path="src/components/ui/input.tsx">
+import * as React from "react";
+
+import { cn } from "../../lib/utils";
+
+export interface InputProps
+	extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+	({ className, type, ...props }, ref) => {
+		return (
+			<input
+				type={type}
+				className={cn(
+					"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+					className,
+				)}
+				ref={ref}
+				{...props}
+			/>
+		);
+	},
+);
+Input.displayName = "Input";
+
+export { Input };
+</file>
+
+<file path="src/components/ui/label.tsx">
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "../../lib/utils";
+
+const labelVariants = cva(
+	"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+);
+
+const Label = React.forwardRef<
+	React.ElementRef<typeof LabelPrimitive.Root>,
+	React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+		VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+	<LabelPrimitive.Root
+		ref={ref}
+		className={cn(labelVariants(), className)}
+		{...props}
+	/>
+));
+Label.displayName = LabelPrimitive.Root.displayName;
+
+export { Label };
+</file>
+
+<file path="src/components/ui/select.tsx">
+import * as React from "react";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { Check, ChevronDown } from "lucide-react";
+
+import { cn } from "../../lib/utils";
+
+const Select = SelectPrimitive.Root;
+
+const SelectGroup = SelectPrimitive.Group;
+
+const SelectValue = SelectPrimitive.Value;
+
+const SelectTrigger = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Trigger>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+	<SelectPrimitive.Trigger
+		ref={ref}
+		className={cn(
+			"flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+			className,
+		)}
+		{...props}
+	>
+		{children}
+		<SelectPrimitive.Icon asChild>
+			<ChevronDown className="h-4 w-4 opacity-50" />
+		</SelectPrimitive.Icon>
+	</SelectPrimitive.Trigger>
+));
+SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
+
+const SelectContent = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Content>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = "popper", ...props }, ref) => (
+	<SelectPrimitive.Portal>
+		<SelectPrimitive.Content
+			ref={ref}
+			className={cn(
+				"relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+				position === "popper" &&
+					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+				className,
+			)}
+			position={position}
+			{...props}
+		>
+			<SelectPrimitive.Viewport
+				className={cn(
+					"p-1",
+					position === "popper" &&
+						"h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
+				)}
+			>
+				{children}
+			</SelectPrimitive.Viewport>
+		</SelectPrimitive.Content>
+	</SelectPrimitive.Portal>
+));
+SelectContent.displayName = SelectPrimitive.Content.displayName;
+
+const SelectLabel = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Label>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
+>(({ className, ...props }, ref) => (
+	<SelectPrimitive.Label
+		ref={ref}
+		className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+		{...props}
+	/>
+));
+SelectLabel.displayName = SelectPrimitive.Label.displayName;
+
+const SelectItem = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Item>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+>(({ className, children, ...props }, ref) => (
+	<SelectPrimitive.Item
+		ref={ref}
+		className={cn(
+			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			className,
+		)}
+		{...props}
+	>
+		<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+			<SelectPrimitive.ItemIndicator>
+				<Check className="h-4 w-4" />
+			</SelectPrimitive.ItemIndicator>
+		</span>
+
+		<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+	</SelectPrimitive.Item>
+));
+SelectItem.displayName = SelectPrimitive.Item.displayName;
+
+const SelectSeparator = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Separator>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+	<SelectPrimitive.Separator
+		ref={ref}
+		className={cn("-mx-1 my-1 h-px bg-muted", className)}
+		{...props}
+	/>
+));
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+
+export {
+	Select,
+	SelectGroup,
+	SelectValue,
+	SelectTrigger,
+	SelectContent,
+	SelectLabel,
+	SelectItem,
+	SelectSeparator,
+};
+</file>
+
+<file path="src/index.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+</file>
+
+<file path="src/lib/utils.ts">
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
+</file>
+
+<file path="src/main.tsx">
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+	<React.StrictMode>
+		<App />
+	</React.StrictMode>,
+);
+</file>
+
+<file path="src/services/configService.ts">
+import axios from "axios";
+import type{ UIConfig } from "./types";
+
+// In a real deployment, the base URL might come from an env variable or .env file
+const API_BASE_URL = "http://localhost:8000";
+
+export async function getUIConfig(
+  tenantId: string,
+  configName: string
+): Promise<UIConfig> {
+  const response = await axios.get(`${API_BASE_URL}/config/${tenantId}/${configName}`);
+  return response.data;
+}
+</file>
+
+<file path="src/services/types.ts">
+export interface FormField {
+  id: string;
+  type: string;                  // "text", "select", "checkbox", "header", "static"
+  label?: string;
+  name?: string;
+  options?: string[];
+  content?: string;
+  default?: string | boolean;
+}
+
+export interface UIConfig {
+  _id?: string;
+  tenant_id: string;
+  config_name: string;
+  description?: string;
+  fields: FormField[];
+}
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+	darkMode: ["class"],
+	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+	theme: {
+		container: {
+			center: true,
+			padding: "2rem",
+			screens: {
+				"2xl": "1400px",
+			},
+		},
+		extend: {
+			colors: {
+				border: "hsl(var(--border))",
+				input: "hsl(var(--input))",
+				ring: "hsl(var(--ring))",
+				background: "hsl(var(--background))",
+				foreground: "hsl(var(--foreground))",
+				primary: {
+					DEFAULT: "hsl(var(--primary))",
+					foreground: "hsl(var(--primary-foreground))",
+				},
+				secondary: {
+					DEFAULT: "hsl(var(--secondary))",
+					foreground: "hsl(var(--secondary-foreground))",
+				},
+				destructive: {
+					DEFAULT: "hsl(var(--destructive))",
+					foreground: "hsl(var(--destructive-foreground))",
+				},
+				muted: {
+					DEFAULT: "hsl(var(--muted))",
+					foreground: "hsl(var(--muted-foreground))",
+				},
+				accent: {
+					DEFAULT: "hsl(var(--accent))",
+					foreground: "hsl(var(--accent-foreground))",
+				},
+				popover: {
+					DEFAULT: "hsl(var(--popover))",
+					foreground: "hsl(var(--popover-foreground))",
+				},
+				card: {
+					DEFAULT: "hsl(var(--card))",
+					foreground: "hsl(var(--card-foreground))",
+				},
+			},
+			borderRadius: {
+				lg: "var(--radius)",
+				md: "calc(var(--radius) - 2px)",
+				sm: "calc(var(--radius) - 4px)",
+			},
+			keyframes: {
+				"accordion-down": {
+					from: { height: 0 },
+					to: { height: "var(--radix-accordion-content-height)" },
+				},
+				"accordion-up": {
+					from: { height: "var(--radix-accordion-content-height)" },
+					to: { height: 0 },
+				},
+			},
+			animation: {
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+			},
+		},
+	},
+	plugins: [require("tailwindcss-animate")],
+};
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
+</file>
+
+<file path="vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000
+  }
+})
+</file>
+

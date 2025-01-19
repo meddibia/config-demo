@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getUIConfig } from "./services/configService";
 import GenericForm from "./components/GenericForm";
-import { UIConfig } from "./services/types";
+import type { UIConfig } from "./services/types";
+import "./index.css";
 
 function App() {
 	const [config, setConfig] = useState<UIConfig | null>(null);
@@ -17,12 +18,13 @@ function App() {
 			.finally(() => setLoading(false));
 	}, []);
 
-	if (loading) return <div>Loading config...</div>;
-	if (!config) return <div>Config not found or error occurred.</div>;
+	if (loading) return <div className="p-4">Loading config...</div>;
+	if (!config)
+		return <div className="p-4">Config not found or error occurred.</div>;
 
 	return (
-		<div style={{ padding: "1rem" }}>
-			<h1>Dynamic Form Demo</h1>
+		<div className="container mx-auto p-4">
+			<h1 className="text-3xl font-bold mb-4">Dynamic Form Demo</h1>
 			<GenericForm config={config} />
 		</div>
 	);
