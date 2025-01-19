@@ -6,6 +6,24 @@ defines the mongodb model for storing form/config data using beanie
 from beanie import Document
 from pydantic import BaseModel, Field, field_serializer
 
+from enum import Enum
+
+
+class FormFieldType(str, Enum):
+    HEADER = "header"
+    STATIC = "static"
+    TEXT = "text"
+    SELECT = "select"
+    CHECKBOX = "checkbox"
+
+
+class ConfigType(str, Enum):
+    PATIENT_REGISTRATION = "patient-registration"
+    PATIENT_SEARCH = "patient-search"
+    PATIENT_DETAILS = "patient-details"
+    PATIENT_ENCOUNTERS = "patient-encounters"
+    PATIENT_BILLING = "patient-billing"
+
 
 # TODO:  add enum for type
 class FormField(BaseModel):
@@ -20,7 +38,7 @@ class FormField(BaseModel):
     """
 
     id: str
-    type: str
+    type: FormFieldType
     label: str | None = None
     name: str | None = None
     options: list[str] | None = None
@@ -36,8 +54,7 @@ class UIConfig(Document):
     """
 
     tenant_id: str
-    # this could also be config_type as an enum
-    config_name: str  # e.g. 'patient-registration'
+    type: ConfigType
     description: str | None
     fields: list[FormField] = Field(default_factory=list)
 
