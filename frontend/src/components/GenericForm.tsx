@@ -25,7 +25,7 @@ function GenericForm({ config }: GenericFormProps) {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{config.name}</CardTitle>
+        <CardTitle>{config.type}</CardTitle>
         <CardDescription>{config.description}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
