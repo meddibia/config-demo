@@ -10,9 +10,10 @@ implements redis caching to reduce mongodb lookups
 #       cache access
 
 from fastapi import APIRouter, HTTPException, status
+import logfire  # ← add import to enable manual spans
 
 from config_model import UIConfig, UpdateUIConfig, ConfigType
-from redis_cache import get_config_from_cache, set_config_in_cache
+from redis_cache import get_config_from_cache, set_config_in_cache, flush_cache
 
 router = APIRouter()
 
@@ -23,19 +24,24 @@ async def get_ui_config(tenant_id: str, config_type: ConfigType):
     fetch a ui config from redis or from mongodb if not found in the cache
     """
 
-    # check cache
-    cached_config = get_config_from_cache(tenant_id, config_type)
-    if cached_config:
-        return cached_config
+    # We'll create a parent span to measure the entire request,
+    # then sub-spans to compare cache vs. DB fetch.
+    with logfire.span("get_ui_config total"):
+        with logfire.span("cache lookup"):
+            cached_config = get_config_from_cache(tenant_id, config_type)
 
-    # if not in cache, fetch from mongo
-    doc = await UIConfig.find_one(
-        UIConfig.tenant_id == tenant_id, UIConfig.type == config_type
-    )
-    if not doc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Config not found"
-        )
+        if cached_config:
+            logfire.info("Cache hit", tenant_id=tenant_id, config_type=str(config_type))
+            return cached_config
+
+        with logfire.span("db fetch"):
+            doc = await UIConfig.find_one(
+                UIConfig.tenant_id == tenant_id, UIConfig.type == config_type
+            )
+            if not doc:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Config not found"
+                )
 
     # cache + return result
     set_config_in_cache(tenant_id, config_type, doc.model_dump())
@@ -116,3 +122,12 @@ async def list_configs(
 
     configs = await UIConfig.find(query).to_list()
     return configs
+
+
+@router.post("/flush-cache")
+async def flush_cache_endpoint():
+    """
+    Clears the entire Redis cache. Use with caution!
+    """
+    flush_cache()
+    return {"status": "success", "message": "Redis cache flushed"}

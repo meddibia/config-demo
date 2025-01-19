@@ -16,6 +16,9 @@ CACHE_EXPIRE_S = 3600  # 1 hour
 
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
+# TODO: make a decorator to wrap the cache functions
+#       should effectively automate the cache lookup/set logic
+
 
 def get_config_from_cache(tenant_id: str, config_name: str) -> dict:
     key = f"ui_config:{tenant_id}:{config_name}"
@@ -28,3 +31,11 @@ def get_config_from_cache(tenant_id: str, config_name: str) -> dict:
 def set_config_in_cache(tenant_id: str, config_name: str, config_dict: dict):
     key = f"ui_config:{tenant_id}:{config_name}"
     redis_client.set(key, json.dumps(config_dict), ex=CACHE_EXPIRE_S)
+
+
+def flush_cache():
+    """
+    Flushes the entire Redis database.
+    Use with caution, as this clears all keys/data.
+    """
+    redis_client.flushdb()
