@@ -28,7 +28,7 @@ import { toast } from "sonner";
 
 // Optionally, adjust to your actual backend base URL
 const API_BASE_URL =
-	(import.meta.env?.VITE_API_URL as string) ?? "http://localhost:8000";
+	(import.meta.env.VITE_API_URL as string) ?? "http://localhost:8000";
 
 export default function ConfiguratorPage() {
 	// Basic config data
