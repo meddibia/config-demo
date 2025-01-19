@@ -4,10 +4,6 @@ fastapi router for crud ops on UIConfig
 implements redis caching to reduce mongodb lookups
 """
 
-# TODO: figure out what, if any, authentication is required for cache hits/writes
-#       it may just be as simple as applying our regullar RBAC and letting that control
-#       cache access
-
 import logfire  # ← add import to enable manual spans
 from config_model import ConfigType, UIConfig, UpdateUIConfig
 from fastapi import APIRouter, HTTPException, status
@@ -17,6 +13,10 @@ from redis_cache import (
     get_config_from_cache,
     set_config_in_cache,
 )
+
+# TODO: figure out what, if any, authentication is required for cache hits/writes
+#       it may just be as simple as applying our regullar RBAC and letting that control
+#       cache access
 
 router = APIRouter()
 

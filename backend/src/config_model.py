@@ -25,7 +25,18 @@ class ConfigType(str, Enum):
     PATIENT_BILLING = "patient-billing"
 
 
-# TODO:  add enum for type
+class FieldValidation(BaseModel):
+    """
+    optional constraints that can be applied to a form field
+    """
+
+    required: bool = True
+    min_length: int | None = None
+    max_length: int | None = None
+    pattern: str | None = None  # regex pattern
+    # implement as many as needed: ge, le, gt, lt, etc
+
+
 class FormField(BaseModel):
     """
     represents a single form field or a static item in the ui
@@ -45,6 +56,8 @@ class FormField(BaseModel):
     content: str | None = None
     default: str | bool | None = None
 
+    validation: FieldValidation | None = None
+
 
 class UIConfig(Document):
     """
@@ -58,7 +71,7 @@ class UIConfig(Document):
     description: str | None
     fields: list[FormField] = Field(default_factory=list)
 
-    # TODO: see if beanie will let us enforce uniqueness on the tenant_id and config_name fields
+    # TODO: see if beanie will let us enforce uniqueness on the tenant_id and config_type fields
 
     @field_serializer("id")
     def serialize_objcet_id(self, id) -> str:

@@ -4,6 +4,7 @@ entrypoint for backend
 """
 
 import config_router
+import form_router
 import logfire
 from beanie import init_beanie
 from config_model import UIConfig
@@ -38,3 +39,4 @@ async def app_init():
 
 
 app.include_router(config_router.router, prefix="/config", tags=["ui-config"])
+app.include_router(form_router.router, prefix="/form", tags=["form"])
