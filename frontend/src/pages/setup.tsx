@@ -25,21 +25,31 @@ import {
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Optionally, adjust to your actual backend base URL
 const API_BASE_URL =
   (import.meta.env.VITE_API_URL as string) ?? "http://localhost:8000";
 
-export default function ConfiguratorPage() {
-  // Basic config data
-  const [tenantId, setTenantId] = useState("");
+function ConfigFormDialog({
+  tenantId,
+  open,
+  onOpenChange,
+  onSuccess,
+}: {
+  tenantId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess: (config: UIConfig) => void;
+}) {
   const [configType, setConfigType] = useState<ConfigType | "">("");
   const [description, setDescription] = useState("");
-
-  // We'll keep track of whether we've loaded an existing config
-  const [existingConfig, setExistingConfig] = useState<UIConfig | null>(null);
-
-  // The array of form fields
   const [fields, setFields] = useState<FormField[]>([]);
 
   // --------------
@@ -58,7 +68,6 @@ export default function ConfiguratorPage() {
         `${API_BASE_URL}/config/${tenantId}/${configType}`,
       );
       const data = res.data;
-      setExistingConfig(data);
       setDescription(data.description ?? "");
       setFields(data.fields);
       toast.success("Existing config loaded.");
@@ -69,7 +78,6 @@ export default function ConfiguratorPage() {
       } else {
         toast.error("Config not found.");
       }
-      setExistingConfig(null);
       setFields([]);
       setDescription("");
     }
@@ -92,24 +100,11 @@ export default function ConfiguratorPage() {
 
     try {
       let res: { data: UIConfig } | undefined;
-      if (existingConfig) {
-        // If a config is already loaded, do PUT
-        res = await axios.put<UIConfig>(
-          `${API_BASE_URL}/config/${tenantId}/${configType}`,
-          {
-            description,
-            fields,
-          },
-        );
-        toast.success("Config updated successfully");
-      } else {
-        // Otherwise create new (POST)
-        res = await axios.post<UIConfig>(`${API_BASE_URL}/config/`, payload);
-        toast.success("Config created successfully");
-      }
+      res = await axios.post<UIConfig>(`${API_BASE_URL}/config/`, payload);
+      toast.success("Config created successfully");
 
       // After save, update local state
-      setExistingConfig(res.data);
+      onSuccess(res.data);
     } catch (error: unknown) {
       console.error(error);
       if (axios.isAxiosError(error)) {
@@ -133,7 +128,6 @@ export default function ConfiguratorPage() {
       await axios.delete(`${API_BASE_URL}/config/${tenantId}/${configType}`);
       toast.success("Config deleted successfully");
       // Clear local states
-      setExistingConfig(null);
       setFields([]);
       setDescription("");
     } catch (error: unknown) {
@@ -314,23 +308,13 @@ export default function ConfiguratorPage() {
   // --------------
 
   return (
-    <div className="container mx-auto p-4 flex justify-center">
-      <div className="max-w-2xl w-full space-y-6">
-        <h1 className="text-2xl font-bold mb-4">
-          Customize Forms for the Frontend
-        </h1>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Create New Configuration</DialogTitle>
+        </DialogHeader>
 
-        {/* Basic config info */}
-        <div className="space-y-4 border-b pb-4">
-          <div>
-            <Label>Tenant ID</Label>
-            <Input
-              value={tenantId}
-              onChange={(e) => setTenantId(e.target.value)}
-              placeholder="tenant123"
-            />
-          </div>
-
+        <div className="space-y-4">
           <div>
             <Label>Config Type</Label>
             <Select
@@ -359,70 +343,95 @@ export default function ConfiguratorPage() {
             />
           </div>
 
-          <div className="flex space-x-2">
-            <Button variant="default" onClick={handleLoadConfig}>
-              Load Existing Config
-            </Button>
-            <Button variant="outline" onClick={handleDeleteConfig}>
-              Delete Config
-            </Button>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Form Fields</h2>
+              <Button onClick={handleAddField}>Add New Field</Button>
+            </div>
+
+            {fields.map((field) => (
+              <Card key={field.id}>
+                <CardHeader className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      Field: {field.id.slice(0, 8)}...
+                    </CardTitle>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleRemoveField(field.id)}
+                  >
+                    Delete
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <Label>Field Type</Label>
+                  <Select
+                    value={field.type}
+                    onValueChange={(val) =>
+                      handleFieldChange(field.id, "type", val)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(FormFieldType).map((ft) => (
+                        <SelectItem key={ft} value={ft}>
+                          {ft}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {renderFieldControls(field)}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex justify-end">
+            <Button onClick={handleSaveConfig}>Create Config</Button>
           </div>
         </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
-        {/* Form fields */}
+export default function SetupPage() {
+  const [tenantId, setTenantId] = useState("tenant123");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  return (
+    <div className="container mx-auto p-4 flex justify-center">
+      <div className="max-w-2xl w-full space-y-6">
+        <h1 className="text-2xl font-bold mb-4">Configuration Management</h1>
+
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Form Fields</h2>
-            <Button onClick={handleAddField}>Add New Field</Button>
+          <div>
+            <Label>Tenant ID</Label>
+            <Input
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              placeholder="tenant123"
+            />
           </div>
 
-          {fields.map((field) => (
-            <Card key={field.id}>
-              <CardHeader className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    Field: {field.id.slice(0, 8)}...
-                  </CardTitle>
-                </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleRemoveField(field.id)}
-                >
-                  Delete
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {/* Field type selector */}
-                <Label>Field Type</Label>
-                <Select
-                  value={field.type}
-                  onValueChange={(val) =>
-                    handleFieldChange(field.id, "type", val)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(FormFieldType).map((ft) => (
-                      <SelectItem key={ft} value={ft}>
-                        {ft}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          <ConfigFormDialog
+            tenantId={tenantId}
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            onSuccess={(config) => {
+              setIsDialogOpen(false);
+              // Handle success if needed
+            }}
+          />
 
-                {/* Show dynamic controls based on field type */}
-                {renderFieldControls(field)}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Save button */}
-        <div className="flex justify-end">
-          <Button onClick={handleSaveConfig}>Save Config</Button>
+          <Button onClick={() => setIsDialogOpen(true)}>
+            Create New Config
+          </Button>
         </div>
       </div>
     </div>
