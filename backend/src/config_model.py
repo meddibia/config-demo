@@ -46,3 +46,8 @@ class UIConfig(Document):
     @field_serializer("id")
     def serialize_objcet_id(self, id) -> str:
         return str(id)
+
+
+class UpdateUIConfig(BaseModel):
+    description: str | None = None
+    fields: list[FormField] | None = None

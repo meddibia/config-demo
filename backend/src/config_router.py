@@ -11,7 +11,7 @@ implements redis caching to reduce mongodb lookups
 
 from fastapi import APIRouter, HTTPException, status
 
-from config_model import UIConfig
+from config_model import UIConfig, UpdateUIConfig
 from redis_cache import get_config_from_cache, set_config_in_cache
 
 router = APIRouter()
@@ -38,7 +38,7 @@ async def get_ui_config(tenant_id: str, config_name: str):
         )
 
     # cache + return result
-    set_config_in_cache(tenant_id, config_name, doc.dict())
+    set_config_in_cache(tenant_id, config_name, doc.model_dump())
     return doc
 
 
@@ -59,12 +59,14 @@ async def create_ui_config(config: UIConfig):
         )
     await config.insert()
 
-    set_config_in_cache(config.tenant_id, config.config_name, config.dict())
+    set_config_in_cache(config.tenant_id, config.config_name, config.model_dump())
     return config
 
 
 @router.put("/{tenant_id}/{config_name}", response_model=UIConfig)
-async def update_ui_config(tenant_id: str, config_name: str, updated_data: UIConfig):
+async def update_ui_config(
+    tenant_id: str, config_name: str, updated_data: UpdateUIConfig
+):
     """update existing config in both mongodb and redis"""
     doc = await UIConfig.find_one(
         UIConfig.tenant_id == tenant_id, UIConfig.config_name == config_name
@@ -72,16 +74,19 @@ async def update_ui_config(tenant_id: str, config_name: str, updated_data: UICon
     if not doc:
         raise HTTPException(status_code=404, detail="Config not found")
 
-    doc.fields = updated_data.fields
-    doc.description = updated_data.description
+    if updated_data.fields:
+        doc.fields = updated_data.fields
+    if updated_data.description:
+        doc.description = updated_data.description
+
     await doc.save()
 
-    set_config_in_cache(tenant_id, config_name, doc.dict())
+    set_config_in_cache(tenant_id, config_name, doc.model_dump())
     return doc
 
 
 @router.get("/", response_model=list[UIConfig])
-async def list_configs(tenant_id: str | None = None, config_name : str | None = None):
+async def list_configs(tenant_id: str | None = None, config_name: str | None = None):
     """list existing configs that match the query parameters"""
 
     query = {}
@@ -92,3 +97,22 @@ async def list_configs(tenant_id: str | None = None, config_name : str | None = 
 
     configs = await UIConfig.find(query).to_list()
     return configs
+
+
+@router.put("/uiconfig/{config_id}", response_model=UIConfig)
+async def update_ui_config_by_id(config_id: str, config: UpdateUIConfig):
+    existing_config = await UIConfig.get(config_id)
+    if not existing_config:
+        raise HTTPException(status_code=404, detail="UIConfig not found")
+
+    update_data = config.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(existing_config, key, value)
+
+    await existing_config.save()
+    set_config_in_cache(
+        existing_config.tenant_id,
+        existing_config.config_name,
+        existing_config.model_dump(),
+    )
+    return existing_config
