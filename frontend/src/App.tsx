@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import GenericForm from "./components/GenericForm";
+import SetupPage from "./pages/setup";
 import { getUIConfig } from "./services/configService";
 import type { UIConfig } from "./services/types";
 import "./index.css";
 
-function App() {
+function HomePage() {
 	const [config, setConfig] = useState<UIConfig | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -27,6 +30,17 @@ function App() {
 			<h1 className="text-3xl font-bold mb-4">Dynamic Form Demo</h1>
 			<GenericForm config={config} />
 		</div>
+	);
+}
+
+function App() {
+	return (
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route path="/setup" element={<SetupPage />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 

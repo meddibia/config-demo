@@ -6,7 +6,7 @@ COPY package.json bun.lockb* ./
 RUN bun install
 
 COPY . .
-ENV VITE_API_URL="http://backend:8000"
+ENV VITE_API_URL="http://localhost:8000"
 RUN bun run build
 
 FROM nginx:alpine
