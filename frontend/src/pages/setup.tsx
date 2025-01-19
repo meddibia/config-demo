@@ -314,114 +314,116 @@ export default function ConfiguratorPage() {
   // --------------
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Customize Forms for the Frontend
-      </h1>
+    <div className="container mx-auto p-4 flex justify-center">
+      <div className="max-w-2xl w-full space-y-6">
+        <h1 className="text-2xl font-bold mb-4">
+          Customize Forms for the Frontend
+        </h1>
 
-      {/* Basic config info */}
-      <div className="space-y-4 border-b pb-4">
-        <div>
-          <Label>Tenant ID</Label>
-          <Input
-            value={tenantId}
-            onChange={(e) => setTenantId(e.target.value)}
-            placeholder="tenant123"
-          />
+        {/* Basic config info */}
+        <div className="space-y-4 border-b pb-4">
+          <div>
+            <Label>Tenant ID</Label>
+            <Input
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              placeholder="tenant123"
+            />
+          </div>
+
+          <div>
+            <Label>Config Type</Label>
+            <Select
+              value={configType}
+              onValueChange={(val) => setConfigType(val as ConfigType)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select config type" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(ConfigType).map((ct) => (
+                  <SelectItem key={ct} value={ct}>
+                    {ct}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Description</Label>
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Short description of the config..."
+            />
+          </div>
+
+          <div className="flex space-x-2">
+            <Button variant="default" onClick={handleLoadConfig}>
+              Load Existing Config
+            </Button>
+            <Button variant="outline" onClick={handleDeleteConfig}>
+              Delete Config
+            </Button>
+          </div>
         </div>
 
-        <div>
-          <Label>Config Type</Label>
-          <Select
-            value={configType}
-            onValueChange={(val) => setConfigType(val as ConfigType)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select config type" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(ConfigType).map((ct) => (
-                <SelectItem key={ct} value={ct}>
-                  {ct}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Form fields */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Form Fields</h2>
+            <Button onClick={handleAddField}>Add New Field</Button>
+          </div>
+
+          {fields.map((field) => (
+            <Card key={field.id}>
+              <CardHeader className="flex items-start justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    Field: {field.id.slice(0, 8)}...
+                  </CardTitle>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleRemoveField(field.id)}
+                >
+                  Delete
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {/* Field type selector */}
+                <Label>Field Type</Label>
+                <Select
+                  value={field.type}
+                  onValueChange={(val) =>
+                    handleFieldChange(field.id, "type", val)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(FormFieldType).map((ft) => (
+                      <SelectItem key={ft} value={ft}>
+                        {ft}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Show dynamic controls based on field type */}
+                {renderFieldControls(field)}
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        <div>
-          <Label>Description</Label>
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Short description of the config..."
-          />
+        {/* Save button */}
+        <div className="flex justify-end">
+          <Button onClick={handleSaveConfig}>Save Config</Button>
         </div>
-
-        <div className="flex space-x-2">
-          <Button variant="default" onClick={handleLoadConfig}>
-            Load Existing Config
-          </Button>
-          <Button variant="outline" onClick={handleDeleteConfig}>
-            Delete Config
-          </Button>
-        </div>
-      </div>
-
-      {/* Form fields */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Form Fields</h2>
-          <Button onClick={handleAddField}>Add New Field</Button>
-        </div>
-
-        {fields.map((field) => (
-          <Card key={field.id}>
-            <CardHeader className="flex items-start justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  Field: {field.id.slice(0, 8)}...
-                </CardTitle>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => handleRemoveField(field.id)}
-              >
-                Delete
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {/* Field type selector */}
-              <Label>Field Type</Label>
-              <Select
-                value={field.type}
-                onValueChange={(val) =>
-                  handleFieldChange(field.id, "type", val)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(FormFieldType).map((ft) => (
-                    <SelectItem key={ft} value={ft}>
-                      {ft}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* Show dynamic controls based on field type */}
-              {renderFieldControls(field)}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Save button */}
-      <div className="flex justify-end">
-        <Button onClick={handleSaveConfig}>Save Config</Button>
       </div>
     </div>
   );
