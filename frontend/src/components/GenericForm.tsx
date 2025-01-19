@@ -1,15 +1,15 @@
 import type React from "react";
-import type { UIConfig, FormField } from "../services/types";
-import FormFieldComponent from "./FormField";
 import { Button } from "../components/ui/button";
 import {
 	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
-	CardDescription,
-	CardContent,
-	CardFooter,
 } from "../components/ui/card";
+import type { FormField, UIConfig } from "../services/types";
+import FormFieldComponent from "./FormField";
 
 interface GenericFormProps {
 	config: UIConfig;

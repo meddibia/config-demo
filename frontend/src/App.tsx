@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getUIConfig } from "./services/configService";
 import GenericForm from "./components/GenericForm";
+import { getUIConfig } from "./services/configService";
 import type { UIConfig } from "./services/types";
 import "./index.css";
 

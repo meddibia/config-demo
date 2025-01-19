@@ -1,8 +1,7 @@
 import { useState } from "react";
-import type { FormField } from "../services/types";
+import { Checkbox } from "../components/ui/checkbox";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Checkbox } from "../components/ui/checkbox";
 import {
 	Select,
 	SelectContent,
@@ -10,6 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+import type { FormField } from "../services/types";
 
 interface FieldProps {
 	field: FormField;
