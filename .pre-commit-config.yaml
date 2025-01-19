@@ -11,7 +11,7 @@ repos:
     rev: v0.8.1
     hooks:
       - id: ruff
-        args: [ --fix, --config=./ruff.toml ]
+        args: [ --select=I, --fix, --config=./ruff.toml ]
         types_or: [ python, jupyter ]
       - id: ruff-format
         types_or: [ python, jupyter ]

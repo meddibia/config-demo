@@ -15,7 +15,7 @@ exclude = [
 
 [lint]
 ignore = ["E402", "F403"]
-fixable = ["ALL"]
+fixable = ["ALL", "I"]
 unfixable = []
 # allow unused vars if prefixed
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
